@@ -1,3 +1,5 @@
+
+
 $(document).ready(function(){
     // switching active tabs
     $('.main__items').on('click', 'div:not(.main__items-wrapper_active)', function() { 
@@ -20,82 +22,112 @@ $(document).ready(function(){
     
     
     // Fetching data from DogAPI
-    
+    var MyVariables = {};
     const BASE_API_URL = 'https://api.thedogapi.com/v1/';
     const fetchDoggoBreeds = async () =>{
-       const response = await fetch(BASE_API_URL + 'breeds');
-       const dogBreeds = await response.json();
-       getBreedsOptions(dogBreeds);
-    };
-    // filling images
-    const getBreedsOptions = (breeds) =>{  
-        const breedOptions = breeds.map(breed =>{
+        const response = await fetch(BASE_API_URL + 'breeds');
+        const dogBreeds = await response.json();
+        MyVariables.breedOptions = dogBreeds.map(breed =>{
             breed.text = breed.name;
             breed.value = breed.id;
             breed.url = breed.image.url;
             breed.reffImgId = breed.image.id;
+            breed.for= breed.bred_for;
             return breed;
         });
-        fillDogImgs(breedOptions);
-        fillSelector(breedOptions);
+        fillDogImgs(MyVariables.breedOptions);
+        fillSelector(MyVariables.breedOptions);
     };
 
-
-    
-    let imgs = [];
-    const fillDogImgs = (breedOpts) =>{
-        document.querySelectorAll('.sub__breeds-container_1-item img').forEach(e=>{imgs.push(e);});
-        document.querySelectorAll('.sub__breeds-container_2-item img').forEach(e=>{imgs.push(e);});
-        imgs.forEach((e)=>{
+    console.log(MyVariables);
+    // filling images
+    const fillDogImgs = (breedOpts) =>{  
+        document.querySelectorAll('.wrapper').forEach((e)=>{
             let i = getRandomInt(171);
-            e.setAttribute('src', breedOpts[i].url);
-            e.setAttribute('name', breedOpts[i].text);
-            e.setAttribute('ImgId', breedOpts[i].reffImgId);
-/*             let j = 171 - i;
-            e.setAttribute('src', breedOptions[j].url);
-            e.setAttribute('name', breedOptions[j].text);
-            e.setAttribute('ImgId', breedOptions[j].reffImgId); */
+            let ell = document.createElement('img');
+            ell.setAttribute('src', MyVariables.breedOptions[i].url);
+            ell.setAttribute('value', MyVariables.breedOptions[i].id);
+            e.append(ell);
+            if(MyVariables.breedOptions[i].name.length > 21){
+                MyVariables.breedOptions[i].name = MyVariables.breedOptions[i].name.slice(0,20);
+            }
+            e.childNodes[0].innerHTML = MyVariables.breedOptions[i].name;
         });
-        showBreedOnHover(imgs);
     };
-    
-/*     $('.sub__breeds-header_sort-reversed').on('click', ()=>{
-        console.log(imgs);
-        imgs.forEach((e,i)=>{
-            let j = 171 - i;
-            e.setAttribute('src', e.url);
-            e.setAttribute('name', e.text);
-            e.setAttribute('ImgId', e.reffImgId);
-        });
-    }); */
+
+    //filling selector
     function fillSelector(breeds){
         breeds.forEach((e)=>{
             document.querySelector('.sub__breeds-header_dropdown_1').innerHTML += `<option value="${e.name}" >${e.name}</option>`;
         });
     }
-    console.log(document.querySelectorAll('.sub__breeds-header_dropdown_2 option'));
 
-    document.querySelectorAll('.sub__breeds-header_dropdown_2 option').forEach(e=>{
-        console.log('222222222');
-        e.addEventListener('click', (event)=>{
-            if(e.getAttribute('value') == 5){console.log('!!');}
-        });
-    }); 
-
-    const showBreedOnHover = (img) => {
-        img.forEach(e=>{
-            e.name.replace(/\(/, '');
-            if(e.name.length > 21){
-                e.name = e.name.slice(0,21);   
+    // get the Info about a Dog
+    $('.sub__breeds-container .wrapper').on('click', (e)=>{
+            let index = e.target.lastElementChild.getAttribute('value');
+            console.log(index);
+            let idd;
+            for(let i=0; i<172; i++){
+                if(MyVariables.breedOptions[i].id == index){
+                    idd = i;
+                    break;
+                }
             }
-            e.previousElementSibling.innerHTML= e.name;
+            console.log(idd);
+            $('.sub__breeds').removeClass('active');
+            $('.sub__descr').addClass('active');
+            $('#descr_img').attr('src', e.target.lastElementChild.getAttribute('src'));
+            $('.sub__descr-info_label').text(MyVariables.breedOptions[idd].name.slice(0,17));
+            $('.sub__descr-info_text_subheader').text(MyVariables.breedOptions[idd].for);
+            $('.sub__descr-id').text(e.target.lastElementChild.getAttribute('value'));
+            $('.sub__descr-info_text_left div').text(MyVariables.breedOptions[idd].temperament);
+            $('.sub__descr-info_text_right div').eq(0).text(MyVariables.breedOptions[idd].height.metric + ` cm`);
+            $('.sub__descr-info_text_right div').eq(1).text(MyVariables.breedOptions[idd].weight.metric + ` kgs`);
+            $('.sub__descr-info_text_right div').eq(2).text(MyVariables.breedOptions[idd].life_span);
+    });
+
+    //set limit for imgs/page
+    $('.sub__breeds-header_dropdown_2').on('click', (e)=>{
+        console.log(e.target);
+    });
+    //revert sorting
+    $('.sub__breeds-header_sort-reversed').on('click', ()=>{
+        document.querySelectorAll('.wrapper').forEach((e,i)=>{
+            e.firstElementChild.innerHTML = '';
+            if(e.childNodes.length > 1){e.lastElementChild.remove();} 
+            let j = 171 - i;
+            let ell = document.createElement('img');
+            ell.setAttribute('src', MyVariables.breedOptions[j].url);
+            ell.setAttribute('value', MyVariables.breedOptions[j].id);
+            e.append(ell);
+            if(MyVariables.breedOptions[i].name.length > 21){
+                MyVariables.breedOptions[i].name = MyVariables.breedOptions[j].name.slice(0,21);
+            }
+            e.childNodes[0].innerHTML = MyVariables.breedOptions[j].name;
         });
-    };
-    
+    });
+    //normal sorting
+    $('.sub__breeds-header_sort-normal').on('click', ()=>{
+        document.querySelectorAll('.wrapper').forEach((e,i)=>{
+            e.firstElementChild.innerHTML = '';
+            if(e.childNodes.length > 1){e.lastElementChild.remove();} 
+            let ell = document.createElement('img');
+            ell.setAttribute('src', MyVariables.breedOptions[i].url);
+            ell.setAttribute('value', MyVariables.breedOptions[i].id);
+            e.append(ell);
+            if(MyVariables.breedOptions[i].name.length > 21){
+                MyVariables.breedOptions[i].name = MyVariables.breedOptions[i].name.slice(0,21);
+            }
+            e.childNodes[0].innerHTML = MyVariables.breedOptions[i].name;
+        });
+    });
+
 
     //func for randomInt
     function getRandomInt(max) {
         return Math.floor(Math.random() * max);
     }
     fetchDoggoBreeds();
+
+
 });
