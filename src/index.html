@@ -46,9 +46,9 @@
                         <div class="sub__bar_search_rectangle"><i class="icon-search-20"></i></div>
                     </div>
                     <div class="sub__bar_menu">
-                        <div class="sub__bar_menu-item"><i class="icon-like-30"></i></div>
-                        <div class="sub__bar_menu-item"><i class="icon-fav-30"></i></div>
-                        <div class="sub__bar_menu-item"><i class="icon-dislike-30"></i></div>
+                        <div class="sub__bar_menu-item" id='toLikes'><i class="icon-like-30" ></i></div>
+                        <div class="sub__bar_menu-item" id='toFavs'><i class="icon-fav-30"></i></div>
+                        <div class="sub__bar_menu-item" id='toDislikes'><i class="icon-dislike-30"></i></div>
                     </div>
                 </div>
                 <div class="sub__container_padding20">
@@ -60,18 +60,15 @@
                             <span class="sub__voting-header_label">VOTING</span>
                         </div>
                         <div class="sub__voting-image">
-                            <img src="img/image 1.jpg" alt="">
+                            <img src="" alt="">
                         </div>
                         <div class="sub__voting-estimate">
-                            <div class="sub__voting-estimate_item"><i class="icon-like-30"></i></div>
-                            <div class="sub__voting-estimate_item"><i class="icon-fav-30"></i></div>
-                            <div class="sub__voting-estimate_item"><i class="icon-dislike-30"></i></div>
+                            <div class="sub__voting-estimate_item" id='like'><i class="icon-like-30"></i></div>
+                            <div class="sub__voting-estimate_item" id='fav'><i class="icon-fav-30"></i></div>
+                            <div class="sub__voting-estimate_item" id='dis'><i class="icon-dislike-30"></i></div>
                         </div>
                         <div class="sub__voting-userlog">
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
-                            <div>1</div>
+ 
                         </div>
                     </section>
                     <section class="sub__breeds"> <!-- Breeds-->
@@ -92,57 +89,64 @@
                             <div class="sub__breeds-header_sort-reversed"><i class="icon-sort-20"></div>
                             <div class="sub__breeds-header_sort-normal"><i class="icon-sort-revert-20"></i></div>
                         </div>
-                        <div class="sub__breeds-container">
-                            <div class="sub__breeds-container_1">
-                                <div class="sub__breeds-container_1-item">
+                        <div class="sub__breeds-main_container">
+                            <div class="sub__breeds-container">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_1-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_1-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_1-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_1-item">
-                                    <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
+                                <div class="sub__breeds-container-item">
+                                    <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>        
                             </div>
-                            <div class="sub__breeds-container_2">
-                                <div class="sub__breeds-container_2-item">
+                            <div class="sub__breeds-container">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_2-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_2-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_2-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_2-item">
-                                    <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
+                                <div class="sub__breeds-container-item">
+                                    <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>       
                             </div>
-                            <div class="sub__breeds-container_1">
-                                <div class="sub__breeds-container_1-item">
+                            <div class="sub__breeds-container">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_1-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_1-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_1-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_1-item">
-                                    <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
+                                <div class="sub__breeds-container-item">
+                                    <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>        
                             </div>
-                            <div class="sub__breeds-container_2">  
-                                <div class="sub__breeds-container_2-item">
+                            <div class="sub__breeds-container">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_2-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_2-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_2-item">
+                                <div class="sub__breeds-container-item">
                                     <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                                <div class="sub__breeds-container_2-item">
-                                    <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
-                            </div>
+                                <div class="sub__breeds-container-item">
+                                    <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>       
+                            </div>                            
+                        </div>
+                        <div class="sub__breeds_chosen">
+                            <div class="sub__breeds-container">
+                                <div class="sub__breeds-container-item">
+                                <div class="wrapper"><div class="wrapper-placeholder"></div></div></div>
+                            </div>        
                         </div>
                     </section>
+
                     <section class="sub__descr">
                         <div class="sub__voting-header">
                             <div class="sub__voting-header_rectangle">
@@ -164,6 +168,39 @@
                                 <span>Weight:</span><div class=""></div><br>
                                 <span>Life span:</span><div class=""></div><br></div>
                             </div>
+                        </div>
+                    </section>
+                    <section class="sub__likes">
+                        <div class="sub__voting-header">
+                            <div class="sub__voting-header_rectangle">
+                                <i class="icon-back-20"></i>
+                            </div>
+                            <span class="sub__voting-header_label">LIKES</span>
+                        </div>
+                        <div class="sub__breeds-container">
+                            
+                        </div>
+                    </section>
+                    <section class="sub__favs">
+                        <div class="sub__voting-header">
+                            <div class="sub__voting-header_rectangle">
+                                <i class="icon-back-20"></i>
+                            </div>
+                            <span class="sub__voting-header_label">FAVOURITES</span>
+                        </div>
+                        <div class="sub__breeds-container">
+                            
+                        </div>
+                    </section>
+                    <section class="sub__dislikes">
+                        <div class="sub__voting-header">
+                            <div class="sub__voting-header_rectangle">
+                                <i class="icon-back-20"></i>
+                            </div>
+                            <span class="sub__voting-header_label">DISLIKES</span>
+                        </div>
+                        <div class="sub__breeds-container">
+                            
                         </div>
                     </section>
                 </div>
