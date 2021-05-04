@@ -6,22 +6,26 @@ $(document).ready(function(){
         $('.sub__home').addClass('hidden');
         $('.sub__bar').addClass('sub__bar_active');
         $('.sub__bar_menu-item').removeClass('sub__bar_menu-item_active');
-        if($(this).attr('id') == "voting"){$('.sub__voting').addClass('active').siblings().removeClass('active');
-        getRandomDog();    
+        if($(this).attr('id') == "voting"){
+            $('.sub__voting').addClass('active').siblings().removeClass('active');
+            getRandomDog(); 
+            $('#fav i').first().removeClass('hidden');
+            $('#fav i').last().addClass('hidden');   
         }
         if($(this).attr('id') == "breeds"){$('.sub__breeds').addClass('active').siblings().removeClass('active');}
         if($(this).attr('id') == "gallery"){
+            getFavsIds();
         }
     });
-    
+
     // "back" button
-    $('.sub__voting-header_rectangle').on('click', ()=>{ 
-        $('.sub__home').removeClass('hidden');
-        $('.sub__container').css('background', '$main-color');
-        $('.sub__container_padding20 section').removeClass('active');
-        $('.sub__bar').removeClass('sub__bar_active');
-        $('.main__items-wrapper').removeClass('main__items-wrapper_active');
-        $('.sub__bar_menu-item').removeClass('sub__bar_menu-item_active');
+    $('.sub__voting-header_rectangle').on('click', ()=>{      
+            $('.sub__home').removeClass('hidden');
+            $('.sub__container').css('background', '$main-color');
+            $('.sub__container_padding20 section').removeClass('active');
+            $('.sub__bar').removeClass('sub__bar_active');
+            $('.main__items-wrapper').removeClass('main__items-wrapper_active');
+            $('.sub__bar_menu-item').removeClass('sub__bar_menu-item_active');   
     });
     // menu buttons
     $('.sub__bar_menu').on('click','div:not(.sub__bar_menu-item_active)', function(){
@@ -62,17 +66,22 @@ $(document).ready(function(){
             $('.sub__voting .sub__voting-userlog').prepend('<div class="sub__voting-userlog_timestamp">'+`${time}`+'<div class="sub__voting-userlog-messg">Image ID:<span>'+` ${imgId}` + '</span> was added to Likes</div><div class="sub__voting-userlog_timestamp-icon"><i class="icon-like-30"></div></div>');
             toLikes(imgId);
             getRandomDog();
+            $('#fav i').first().removeClass('hidden');
+            $('#fav i').last().addClass('hidden');
         }
         if($(this).attr('id')=='fav'){
-            $('.sub__voting .sub__voting-userlog').prepend('<div class="sub__voting-userlog_timestamp">'+`${time}`+'<div class="sub__voting-userlog-messg">Image ID:<span>'+` ${imgId}` + '</span> was added to Favourites</div><div class="sub__voting-userlog_timestamp-icon"><i class="icon-fav-30"></div></div>');
-            toFavs(imgId);   
-            
+            if($(this).children().last().hasClass('hidden')){
+                $('.sub__voting .sub__voting-userlog').prepend('<div class="sub__voting-userlog_timestamp">'+`${time}`+'<div class="sub__voting-userlog-messg">Image ID:<span>'+` ${imgId}` + '</span> was added to Favourites</div><div class="sub__voting-userlog_timestamp-icon"><i class="icon-fav-30"></div></div>');
+                toFavs(imgId);   
+                $(this).children().toggleClass('hidden');
+            }
         }
         if($(this).attr('id')=='dis'){
             $('.sub__voting .sub__voting-userlog').prepend('<div class="sub__voting-userlog_timestamp">'+`${time}`+'<div class="sub__voting-userlog-messg">Image ID:<span>'+` ${imgId}` + '</span> was added to Dislikes</div><div class="sub__voting-userlog_timestamp-icon"><i class="icon-dislike-30"></div></div>');
             toDisLikes(imgId);
             getRandomDog();
-            /* $('.sub__dislikes .sub__breeds-container').append('<div class="sub__breeds-container-item"><div class="wrapper"><div class="wrapper-placeholder">'+`${namee}`+'</div><img src="'+`${imgsrc}`+'" value="'+`${id}`+'" name="'+`${namee}`+'"></div></div>'); */
+            $('#fav i').first().removeClass('hidden');
+            $('#fav i').last().addClass('hidden');    
         }
     });
     // block of funcs to vote ********************************************
@@ -147,19 +156,30 @@ $(document).ready(function(){
             "method": "GET"
         }
         }).then(res=>res.json());
-        
-        data.forEach(el=>{
-            if(el.value == 1){getimg1(el.image_id, el.id);}
-            if(el.value == 0){
-                getimg2(el.image_id, el.id);
-            }    
+        const likes = [];
+        const dislikes = [];
+        await data.forEach(el=>{
+            if(el.value == 1){likes.push(el);}
+            if(el.value == 0){dislikes.push(el);}    
         }); 
-        
-        /* $('.sub__dislikes .sub__breeds-container-item').click(function(){
-            const id = $(this).attr('idd');
-            deleteLike(id);
-            alert('Image was deleted from Dislikes');
-        }); */
+        const newEl = document.createElement('div');
+        newEl.classList.add('no-found');
+        newEl.innerHTML = `No items found.`;
+        if(likes.length == 0 && $('.sub__likes').children().length<3){
+            const parent = document.querySelector('.sub__likes');
+            const secEl = document.querySelector('.sub__likes .sub__breeds-container');
+            parent.insertBefore(newEl, secEl);
+        }
+        else if(dislikes.length == 0 && $('.sub__dislikes').children().length < 3){
+            const parent = document.querySelector('.sub__dislikes');
+            const secEl = document.querySelector('.sub__dislikes .sub__breeds-container');
+            parent.insertBefore(newEl, secEl);
+        } else {
+            data.forEach(el=>{
+                if(el.value == 1){getimg1(el.image_id, el.id);}
+                if(el.value == 0){getimg2(el.image_id, el.id);}    
+            }); 
+        }
         async function getimg1(e, id){
             const response = await fetch(BASE_API_URL + `images/` + e);
             const res = await response.json();
@@ -206,13 +226,12 @@ $(document).ready(function(){
             });
             deleteFav(favId);
         }
-        if(!$(this).attr('fav')){
-            console.log('empty');
-            $(this).attr('fav', 'true');
+        if(!$(this).next().attr('fav')){
+            $(this).next().attr('fav', 'true');
             toFavs(id);
         }
         else{
-            $(this).removeAttr('fav');
+            $(this).next().removeAttr('fav');
             getData();
         }
     });
@@ -274,7 +293,7 @@ $(document).ready(function(){
     function fillSelector(){
         MyVariables.breedOptions.forEach((e)=>{
             document.querySelector('.sub__breeds-header_dropdown_1').innerHTML += `<option value="${e.name}">${e.name}</option>`;
-            document.querySelector('.sub__gallery-subheader_dropdown_3').innerHTML += `<option label="${e.name}" value="${e.url}" >${e.name}</option>`;
+            document.querySelector('.sub__gallery-subheader_dropdown_3').innerHTML += `<option label="${e.name}" idd="${e.image.id}" value="${e.url}">${e.name}</option>`;
         });
         
     }
@@ -324,8 +343,11 @@ $(document).ready(function(){
             if(res.breeds[0].name.length>21){name = res.breeds[0].name.slice(0,21);}
             $('.sub__search .sub__breeds-container').append(`<div class="sub__breeds-container-item"><div class="wrapper"><div class="wrapper-placeholder">${name}</div><img src="${res.url}" value="${res.breeds[0].id}" alt=""></div></div>`);
             
-            await items.push($('.sub__search .sub__breeds-container-item'));
-            await $('.sub__search .wrapper').click(function(e){getDogInfo(e);});
+            items.push($('.sub__search .sub__breeds-container-item'));
+            await $('.sub__search .wrapper').click(function(e){
+                getDogInfo(e);
+                
+            });
         }
         $('.sub__search').addClass('active').siblings().removeClass('active');      
     });    
@@ -379,8 +401,7 @@ $(document).ready(function(){
     });
 
     // choose breed filter in Gallery
-    $('.sub__gallery-subheader_dropdown_3').on('change', function(){
-
+    $('.sub__gallery-subheader_dropdown_3').on('change', function(e){
         if($(this).attr('value')=='none'){
             $('.sub__gallery-subheader-item').eq(3).removeClass('hidden');
             $('.sub__gallery .sub__breeds-container')[4].remove();
@@ -402,6 +423,8 @@ $(document).ready(function(){
         }
         else{
             $('.sub__gallery-subheader-item').eq(3).addClass('hidden');
+            let idd = $(this).attr('label');
+            console.log(idd);
             let src = $(this).attr('value');
             $('.sub__gallery .sub__breeds-container').slice(0,4).addClass('hidden');
             if($('.sub__gallery').children().length>6){$('.sub__gallery').children()[6].remove();}
@@ -409,19 +432,46 @@ $(document).ready(function(){
             <div class="sub__breeds-container-item">
                 <div class="wrapper">
                     <div class="wrapper-placeholder wrapper-placeholder_heart"><i class="icon-fav-20"></i><i class="icon-fav-full-white-20 hidden"></i></div>
-                    <img src="${src}" alt="">
+                    <img src="${src}" alt="" idd="${idd}">
                 </div>
             </div></div>`;
             $('.sub__gallery').append(elem);
-            
+            $('.wrapper-placeholder_heart').click(function(){
+                toFavs(idd);
+            });
         }
     });
 
-
-
+    //getting favs id`s
+    let finalArr = [];
+    async function getFavsIds(){
+        const response = await fetch(BASE_API_URL + 'favourites', {
+            method: 'GET',
+            "headers": {
+                "x-api-key": "c8affd4f-0aad-4f43-b0cf-dfa893cebea6"
+            }
+        });
+        const res = await response.json();
+        await res.forEach((e)=>{
+            if(!finalArr.includes(e.image_id)){finalArr.push(e.image_id);}
+        });
+        checkFavs();
+    }
+    function checkFavs(){
+        const placeholders = document.querySelectorAll('.sub__gallery .wrapper-placeholder_heart');
+        placeholders.forEach((e,i)=>{
+            if(!finalArr.includes(e.getAttribute('idd'))){
+                e.childNodes[0].classList.remove('hidden');
+                e.lastElementChild.classList.add('hidden');
+                e.nextElementSibling.removeAttribute('fav');
+            }
+        });
+    }
+    getFavsIds();
     //reload btn
     const reload = $('.reload_btn').click(function(){
         const value = $('.sub__gallery-subheader_dropdown_2').attr('value');
+        getFavsIds();
         switch(value){
             case 'mix':
                 getGalleryContent();
@@ -513,6 +563,7 @@ $(document).ready(function(){
         });
     });
     // modal "upload" window
+    let dropArea = document.querySelector('.modal_content-dropzone-bg');
     $('.sub__gallery-header_upload').click(function(){
         $('.modal_bg, .modal_content').removeClass('hidden');
         $('.sub__bar').removeClass('sub__bar_active');
@@ -520,9 +571,108 @@ $(document).ready(function(){
 
     });
     $('.modal_content_close').click(function(){
-        $('.modal_content, .modal_bg').addClass('hidden');
+        $('.modal_content, .modal_bg, .modal_content-btn').addClass('hidden');
         $('.sub__bar').addClass('sub__bar_active');
         $('.sub__gallery').addClass('active');
+        clearSelect();
+    });
+    function clearSelect(){
+        if(dropArea.childNodes.length>3){dropArea.childNodes[3].remove();}
+        
+        dropArea.childNodes.forEach(e=>{
+            e.classList.remove('hidden');
+        });
+        $('.modal_content-sublabel').text('No file selected');
+        $('.modal_content-success, .modal_content-error').addClass('hidden');
+    }
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults);
+    });
+    function preventDefaults (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, function(){dropArea.childNodes.forEach(e=>{
+            e.classList.add('hidden');
+        });});
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, function(){dropArea.childNodes.forEach(e=>{
+            e.classList.remove('hidden');
+        });});
+    });
+    // drag`n`drop choosing
+    let file;
+    dropArea.addEventListener("drop", (event)=>{
+        dropArea.childNodes[0].classList.add('hidden');
+        dropArea.childNodes[1].classList.add('hidden');
+        event.preventDefault();
+        file = event.dataTransfer.files[0];
+        showFile();
+        $('.modal_content-btn').removeClass('hidden');
+        $('.modal_content-sublabel').text(`Image File Name: ${file.name}`);
+      });
+      
+    function showFile(){
+        let fileType = file.type;
+        let validExtensions = ["image/jpeg", "image/jpg", "image/png"]; 
+        if(validExtensions.includes(fileType)){ 
+            let fileReader = new FileReader(); 
+            fileReader.onloadend = ()=>{
+                let fileURL = fileReader.result;
+                let img = document.createElement('img');
+                img.src = fileURL;
+                img.classList.add('upld_img');
+                dropArea.appendChild(img);
+            };
+            fileReader.readAsDataURL(file);
+        }else{
+            alert("This is not an Image File!");
+            clearSelect();
+            $('.modal_content-btn').addClass('hidden');
+        }
+    }
+    async function uploadFile(){
+        $('.modal_content-btn').html('<img src="../icons/white/loading-white-16.svg"><span></span>UPLOADING');
+        console.log(file);
+        const response = await fetch(BASE_API_URL + 'images/upload', {
+            method: 'POST', 
+            body: JSON.stringify({"file": file}), 
+            processData: false,
+            headers: {
+                "content-type": "application/json",
+                "x-api-key": "c8affd4f-0aad-4f43-b0cf-dfa893cebea6"
+            }
+        }); 
+        if(!response.ok){
+            $('.modal_content-btn').addClass('hidden');
+            $('.modal_content-error').removeClass('hidden');
+            $('.modal_content-btn').html('UPLOAD PHOTO');
+            throw new Error("ERROR");
+        }
+        else{
+            clearSelect();
+            $('.modal_content-btn').addClass('hidden');
+            $('.modal_content-success').removeClass('hidden');
+            $('.modal_content-btn').html('UPLOAD PHOTO');
+        }
+        
+    }
+    // choosing from explorer
+    $('#upload').on('click', ()=>{
+        $('#fileElem').click();
+    }); 
+    $('#fileElem').on("change", function(){
+        file = this.files[0];
+        dropArea.childNodes[0].classList.add('hidden');
+        dropArea.childNodes[1].classList.add('hidden');
+        $('.modal_content-btn').removeClass('hidden');
+        $('.modal_content-sublabel').text(`Image File Name: ${file.name}`);
+        showFile();
+    });
+    $('.modal_content-btn').on('click', function(){
+        uploadFile();
     });
     // get random dog for voting section
     function getRandomDog(){

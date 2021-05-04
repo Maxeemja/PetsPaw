@@ -45,7 +45,19 @@
                     <div class="modal_content_close"><i class="icon-close-20"></i></div>
                     <div class="modal_content-header">Upload a .jpg or .png Dog Image</div>
                     <div class="modal_content-subheader">Any uploads must comply with the <a href="https://www.thedogapi.com/privacy"><span>upload guidelines</span></a> or face deletion.</div>
-                    
+                    <div class="modal_content-dropzone">
+                        <div class="modal_content-dropzone-bg">
+                            <img src="img/Vector.svg" alt="">
+                            <div class="modal_content-dropzone-bg-text">
+                                <span>Drag here</span> your file or <span id='upload'>Click here</span> to upload     
+                            </div>
+                            <input type="file" id="fileElem" onchange="">
+                        </div>
+                    </div>
+                    <div class="modal_content-sublabel">No file selected</div>
+                    <div class="modal_content-btn hidden">UPLOAD PHOTO</div>
+                    <div class="modal_content-success hidden"><img src="icons/tick-20.svg" alt=""> Thanks for the Upload - Dog found!</div>
+                    <div class="modal_content-error hidden"><img src="icons/cross-20.svg" alt=""> No Dog found - try a different one</div>
                 </div>
                 <div class="sub__home"><img src="img/girl-and-pet.png" class="home__img" alt=""></div>
                 <div class="sub__bar">
