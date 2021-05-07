@@ -165,6 +165,12 @@ $(document).ready(function(){
         const newEl = document.createElement('div');
         newEl.classList.add('no-found');
         newEl.innerHTML = `No items found.`;
+        await $('.sub__likes .sub__breeds-container-item').on('click', function(){
+            const id = $(this).attr('idd');
+            console.log(id);
+            alert('Image was deleted from Likes');
+            deleteLike(id);
+        }); 
         if(likes.length == 0 && $('.sub__likes').children().length<3){
             const parent = document.querySelector('.sub__likes');
             const secEl = document.querySelector('.sub__likes .sub__breeds-container');
@@ -176,21 +182,34 @@ $(document).ready(function(){
             parent.insertBefore(newEl, secEl);
         } else {
             data.forEach(el=>{
-                if(el.value == 1){getimg1(el.image_id, el.id);}
+                if(el.value == 1){
+                    getimg1(el.image_id, el.id);
+                     
+                }
                 if(el.value == 0){getimg2(el.image_id, el.id);}    
-            }); 
+            });
+            
         }
+
         async function getimg1(e, id){
             const response = await fetch(BASE_API_URL + `images/` + e);
             const res = await response.json();
-            $('.sub__likes .sub__breeds-container').prepend(`<div class="sub__breeds-container-item" idd="${id}"><div class="wrapper"><div class="wrapper-placeholder">${res.breeds[0].name}</div><img src="${res.url}" value="${res.breeds[0].id}" name="${res.breeds[0].name}"></div></div>`);
-            
+            $('.sub__likes .sub__breeds-container').prepend(`<div class="sub__breeds-container-item"><div class="wrapper" idd="${id}"><div class="wrapper-placeholder">${res.breeds[0].name}</div><img src="${res.url}" value="${res.breeds[0].id}" name="${res.breeds[0].name}"></div></div>`);
+            document.querySelector('.sub__likes .wrapper').addEventListener('click', function(e){
+                const id = e.target.getAttribute('idd');
+                alert('Image was deleted from Likes');
+                deleteLike(id);
+            });
         }
         async function getimg2(e, id){
             const response = await fetch(BASE_API_URL + `images/` + e);
             const res = await response.json();
-            $('.sub__dislikes .sub__breeds-container').prepend(`<div class="sub__breeds-container-item" idd="${id}"><div class="wrapper"><div class="wrapper-placeholder">${res.breeds[0].name}</div><img src="${res.url}" value="${res.breeds[0].id}" name="${res.breeds[0].name}"></div></div>`);
-            
+            $('.sub__dislikes .sub__breeds-container').prepend(`<div class="sub__breeds-container-item"><div class="wrapper" idd="${id}"><div class="wrapper-placeholder">${res.breeds[0].name}</div><img src="${res.url}" value="${res.breeds[0].id}" name="${res.breeds[0].name}"></div></div>`);
+            document.querySelector('.sub__dislikes .wrapper').addEventListener('click', function(e){
+                const id = e.target.getAttribute('idd');
+                alert('Image was deleted from Dislikes');
+                deleteLike(id);
+            });
         }
         
     }
@@ -201,16 +220,11 @@ $(document).ready(function(){
               "x-api-key": "c8affd4f-0aad-4f43-b0cf-dfa893cebea6"
             }
         });
-        alert('Image was deleted from Likes');
     }
-    $('.sub__likes .sub__breeds-container-item').on('click', function(){
-        const id = $(this).attr('idd');
-        console.log(id);
-        deleteLike(id);
-    });
+    
     // adding img to favs
     $('.sub__gallery .wrapper-placeholder_heart').click(function(e){
-        const id = $(this).attr('idd');
+        const id = $(this).attr('id');
         $(this).children().toggleClass('hidden');
         async function getData(){
             const data = await fetch(BASE_API_URL + 'favourites', {
@@ -254,15 +268,14 @@ $(document).ready(function(){
         fillBreedsImgs();
         fillSelector();
     };
-
-    console.log(MyVariables);
     async function getGalleryContent(){
         const response1 = await fetch(BASE_API_URL + 'images/search?mime_types=gif,jpg&limit=20');
         MyVariables.imgNgif = await response1.json();
-        const response2 = await fetch(BASE_API_URL + 'images/search?mime_types=jpg&limit=20&order=Asc');
+        const response2 = await fetch(BASE_API_URL + 'images/search?mime_types=jpg&limit=20');
         MyVariables.imgg = await response2.json();
-        const response3 = await fetch(BASE_API_URL + 'images/search?mime_types=gif&limit=20&order=Asc');
+        const response3 = await fetch(BASE_API_URL + 'images/search?mime_types=gif&limit=20');
         MyVariables.gifs = await response3.json();
+        
         $('.main__items-wrapper').eq(2).click(function(){
             $('.sub__gallery').addClass('active').siblings().removeClass('active');
             fillGalleryMix();
@@ -272,6 +285,65 @@ $(document).ready(function(){
             if($(this).attr('value')=='img'){fillGalleryImg();}
             if($(this).attr('value')=='anim'){fillGalleryGif();}
         });
+        Array.prototype.sortBy = function(p) {
+            return this.slice(0).sort(function(a,b) {
+              return (a[p] > b[p]) ? 1 : (a[p] < b[p]) ? -1 : 0;
+            });
+        };
+        Array.prototype.sortReverse = function(p) {
+            return this.slice(0).sort(function(a,b) {
+              return (a[p] > b[p]) ? -1 : (a[p] < b[p]) ? 1 : 0;
+            });
+        };
+        /* Randomize array in-place using Durstenfeld shuffle algorithm */
+        function shuffleArray(array) {
+            for (var i = array.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
+        $('.sub__gallery .sub__gallery-subheader_dropdown_1').on('change',function(){         
+            let type = $('.sub__gallery .sub__gallery-subheader_dropdown_2').attr('value');
+            if(type == 'mix' && $(this).attr('value')=='asc'){
+                MyVariables.imgNgif = MyVariables.imgNgif.sortBy('id');
+                fillGalleryMix();
+            }
+            else if(type == 'mix' && $(this).attr('value')=='desc'){
+                MyVariables.imgNgif = MyVariables.imgNgif.sortReverse('id');
+                fillGalleryMix();
+            }
+            else if(type == 'mix' && $(this).attr('value')=='rand'){
+                shuffleArray(MyVariables.imgNgif);
+                fillGalleryMix();
+            }
+            else if(type == 'img' && $(this).attr('value')=='asc'){
+                MyVariables.imgg = MyVariables.imgg.sortBy('id');
+                fillGalleryImg();
+            }
+            else if(type == 'img' && $(this).attr('value')=='desc'){
+                MyVariables.imgg = MyVariables.imgg.sortReverse('id');
+                fillGalleryImg();
+            }
+            else if(type == 'img' && $(this).attr('value')=='rand'){
+                shuffleArray(MyVariables.imgg);
+                fillGalleryImg();
+            }
+            else if(type == 'anim' && $(this).attr('value')=='asc'){
+                MyVariables.gifs = MyVariables.gifs.sortBy('id');
+                fillGalleryGif();
+            }
+            else if(type == 'anim' && $(this).attr('value')=='desc'){
+                MyVariables.gifs = MyVariables.gifs.sortReverse('id');
+                fillGalleryGif();
+            }
+            else if(type == 'anim' && $(this).attr('value')=='rand'){
+                shuffleArray(MyVariables.gifs);
+                fillGalleryGif();
+            }
+
+        });   
     }
 
     // filling images
@@ -293,26 +365,26 @@ $(document).ready(function(){
     function fillSelector(){
         MyVariables.breedOptions.forEach((e)=>{
             document.querySelector('.sub__breeds-header_dropdown_1').innerHTML += `<option value="${e.name}">${e.name}</option>`;
-            document.querySelector('.sub__gallery-subheader_dropdown_3').innerHTML += `<option label="${e.name}" idd="${e.image.id}" value="${e.url}">${e.name}</option>`;
+            document.querySelector('.sub__gallery-subheader_dropdown_3').innerHTML += `<option label="${e.name}" value="${e.url}">${e.name}</option>`;
         });
         
     }
 
     const fillGalleryMix = ()=>{
         $('.sub__gallery .wrapper').each(function(i,e){
-            e.childNodes[0].setAttribute('idd', MyVariables.imgNgif[i].id);        
+            e.childNodes[0].setAttribute('id', MyVariables.imgNgif[i].id);        
             e.lastElementChild.setAttribute('src', MyVariables.imgNgif[i].url);
         });
     };
     const fillGalleryImg = ()=>{
         $('.sub__gallery .wrapper').each(function(i,e){
-            e.childNodes[0].setAttribute('idd', MyVariables.imgg[i].id);
+            e.childNodes[0].setAttribute('id', MyVariables.imgg[i].id);
             e.lastElementChild.setAttribute('src', MyVariables.imgg[i].url);
         });
     };
     const fillGalleryGif = ()=>{
         $('.sub__gallery .wrapper').each(function(i,e){
-            e.childNodes[0].setAttribute('idd', MyVariables.gifs[i].id);
+            e.childNodes[0].setAttribute('id', MyVariables.gifs[i].id);
             e.lastElementChild.setAttribute('src', MyVariables.gifs[i].url);
         });
     };
@@ -423,21 +495,29 @@ $(document).ready(function(){
         }
         else{
             $('.sub__gallery-subheader-item').eq(3).addClass('hidden');
-            let idd = $(this).attr('label');
-            console.log(idd);
             let src = $(this).attr('value');
+            let idd = src.slice(34,43);
+            console.log(idd);
+
             $('.sub__gallery .sub__breeds-container').slice(0,4).addClass('hidden');
             if($('.sub__gallery').children().length>6){$('.sub__gallery').children()[6].remove();}
             let elem = `<div class="sub__breeds-container">
             <div class="sub__breeds-container-item">
                 <div class="wrapper">
-                    <div class="wrapper-placeholder wrapper-placeholder_heart"><i class="icon-fav-20"></i><i class="icon-fav-full-white-20 hidden"></i></div>
-                    <img src="${src}" alt="" idd="${idd}">
+                    <div class="wrapper-placeholder wrapper-placeholder_heart" idd="${idd}"><i class="icon-fav-20"></i><i class="icon-fav-full-white-20 hidden"></i></div>
+                    <img src="${src}" alt="">
                 </div>
             </div></div>`;
             $('.sub__gallery').append(elem);
             $('.wrapper-placeholder_heart').click(function(){
-                toFavs(idd);
+                if($(this).children().last().hasClass('hidden')){
+                    toFavs(idd);
+                    $(this).children().first().addClass('hidden');
+                    $(this).children().last().removeClass('hidden');
+                }
+                else{
+                    alert('You`ve already fav it!');
+                }
             });
         }
     });
@@ -692,5 +772,6 @@ $(document).ready(function(){
     }
 
     fetchDoggoBreeds();
+    getLikes();
 
 });
